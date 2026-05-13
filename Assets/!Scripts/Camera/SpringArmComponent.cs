@@ -9,26 +9,28 @@ public class SpringArmComponent : MonoBehaviour
     [SerializeField] Vector3 originOffset = Vector3.up;
     [SerializeField] Vector3 direction = Vector3.up - Vector3.forward;
     [SerializeField] LayerMask layersToIgnore;
-    [Header("Rotation")]
-    [SerializeField] Vector3 EulerOffset;
     [Header("Input")]
-    [SerializeField] float XSens;
-    [SerializeField] float YSens;
-    [SerializeField] float globalSensMultiplier = 5f;
+    [SerializeField, Range(0.1f , 1.5f)] float XSens = 1f;
+    [SerializeField, Range(0.1f , 1.5f)] float YSens = 1f;
+    [SerializeField, Range(0.5f , 2.0f)] float globalSensMultiplier = 1f;
     [SerializeField, Range(0f, 90f)] float minMaxXAngle;
-    [SerializeField] bool lazyUpdate = true;
-    [SerializeField] float lazyUpdationSpeed = 10.0f;
+    [SerializeField] bool lazyUpdatePosition = true;
+    [SerializeField] bool lazyUpdateRotation = false;
+    [SerializeField] float lazyPositionUpdationSpeed = 10.0f;
+    [SerializeField] float lazyRotationUpdationSpeed = 10.0f;
     float xInput, yInput;
+    float currentX, currentY;
     Vector3 origin;
     Vector3 rayDirection;
     Vector3 finalPosition;
     Quaternion finalRotation;
-    float currentXRotation = 0f;
     RaycastHit[] hitsInfo = new RaycastHit[1];
+
     bool isActive = true;
     private void OnEnable()
     {
         SetGameStartState();
+        Application.targetFrameRate = -1;
     }
 
     private void Start()
@@ -56,14 +58,10 @@ public class SpringArmComponent : MonoBehaviour
         xInput = isActive ? Input.GetAxis("Mouse X") : 0;
         yInput = isActive ? Input.GetAxis("Mouse Y") : 0;
         Vector3 rotation = this.transform.localRotation.eulerAngles;
-        float xStep = -yInput * XSens * globalSensMultiplier * Time.deltaTime;
-        float yStep = xInput * YSens * globalSensMultiplier * Time.deltaTime;
-        currentXRotation += xStep;
-        currentXRotation = Mathf.Clamp(currentXRotation, -minMaxXAngle, minMaxXAngle);
-
-        float currentYRotation = transform.localEulerAngles.y + yStep;
-
-        transform.localRotation = Quaternion.Euler(currentXRotation, currentYRotation, 0f);
+        currentX += -yInput * XSens * globalSensMultiplier;
+        currentY += xInput * YSens * globalSensMultiplier;
+        currentX = Mathf.Clamp(currentX, -minMaxXAngle, minMaxXAngle);
+        transform.localRotation = Quaternion.Euler(currentX, currentY, 0f);
     }
 
 
@@ -71,13 +69,13 @@ public class SpringArmComponent : MonoBehaviour
     {
         origin = this.transform.position;
         origin += (this.transform.forward * originOffset.z) + (this.transform.up * originOffset.y) + (this.transform.right * originOffset.x);
-        rayDirection = this.transform.rotation * direction;
+        rayDirection = this.transform.rotation * direction.normalized;
     }
 
     void ComputePosition()
     {
         float camDistance = m_raycastDistance;
-        Vector3 normDir = rayDirection.normalized;
+        Vector3 normDir = rayDirection;
         LayerMask mask = ~layersToIgnore;
         
         if (Physics.SphereCastNonAlloc(origin, 0.25f, normDir, hitsInfo, m_raycastDistance, mask) > 0)
@@ -91,23 +89,17 @@ public class SpringArmComponent : MonoBehaviour
     void ComputeRotation()
     {
         finalRotation = Quaternion.LookRotation(-rayDirection, this.transform.up);
-        finalRotation *= Quaternion.Euler(EulerOffset);
+
     }
 
     void ApplyPose()
-    {
-        mainCamera.transform.position = lazyUpdate ? Vector3.Lerp(mainCamera.transform.position, finalPosition, lazyUpdationSpeed * Time.deltaTime) : finalPosition;
-        mainCamera.transform.rotation = lazyUpdate ? Quaternion.Slerp(mainCamera.transform.rotation, finalRotation, lazyUpdationSpeed * Time.deltaTime) : finalRotation;
+    {   
+        // Gradual Decay ()
+        float rt = 1f - Mathf.Exp(-lazyRotationUpdationSpeed * Time.deltaTime);
+        float pt = 1f - Mathf.Exp(-lazyPositionUpdationSpeed * Time.deltaTime);
+        mainCamera.transform.rotation = lazyUpdateRotation ? Quaternion.Slerp(mainCamera.transform.rotation, finalRotation, rt) : finalRotation;
+        mainCamera.transform.position = lazyUpdatePosition ? Vector3.Lerp(mainCamera.transform.position, finalPosition, pt) : finalPosition;
     }
-
-    public (Vector3, Quaternion) GetComputedPose()
-    {
-        ComputePosition();
-        ComputeRotation();
-        return (finalPosition, finalRotation);
-    }
-
-
 
 
     void SetGameStartState()
