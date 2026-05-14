@@ -1,21 +1,34 @@
 using UnityEngine;
-[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(CharacterController), typeof(PlayerVitalityModule))]
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
-    [SerializeField] PlayerMovementData playerData;
+    [SerializeField] PlayerStatData playerData;
     [SerializeField] Transform bodyTransform;
     CharacterController cc;
+    IDamageHandler vitality; 
     Camera cam;
     Vector3 inputDirection;
     Vector3 intendedDirection;
     Vector3 targetVelocity;
     Vector3 currentVelocity;
     Vector3 lastVelocity;
-    void Start()
+
+    private void Awake()
     {
         cc = GetComponent<CharacterController>();
         cam = Camera.main;
+        vitality = GetComponent<PlayerVitalityModule>();
+    }
+
+    private void OnEnable()
+    {
+        EventManager.GetPlayerTransform.AddListener(GetPlayerTransform);
+        EventManager.GetPlayerVitality.AddListener(GetPlayerVitality);
+    }
+    void Start()
+    {
+        vitality.InitializeDamageData(playerData);
     }
 
     void Update()
@@ -74,6 +87,12 @@ public class PlayerMovement : MonoBehaviour
         cc.Move(currentVelocity * Time.deltaTime);  
     }
 
+    void OnDisable()
+    {
+        EventManager.GetPlayerTransform.RemoveListener(GetPlayerTransform);
+        EventManager.GetPlayerVitality.RemoveListener(GetPlayerVitality);
+    }
+
 
     #region HELPERS
     Vector3 GetAccelaration()
@@ -84,4 +103,9 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
 
+    #region Others
+
+    Transform GetPlayerTransform() => this.gameObject.transform;
+    IDamageHandler GetPlayerVitality() => this.vitality;
+    #endregion
 }

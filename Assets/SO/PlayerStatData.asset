@@ -10,8 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 673e39d1cb06c644cab9b764db9add36, type: 3}
-  m_Name: PlayerMovementData
+  m_Name: PlayerStatData
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovementData
   MaxSpeed: 12
   Accelaration: 35
   Deacclaration: 0.96
+  health: 100
+  damageInflict: 35
+  fireRate: 5

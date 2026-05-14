@@ -36,7 +36,10 @@ public class SpringArmComponent : MonoBehaviour
     private void Start()
     {
         Initialize();
+        
     }
+
+    // Attach a collider at starting position and compute the penetration
 
     void Initialize()
     {
