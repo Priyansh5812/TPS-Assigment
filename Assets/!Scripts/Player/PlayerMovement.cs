@@ -1,14 +1,12 @@
 using UnityEngine;
-
-
 [RequireComponent(typeof(CharacterController))]
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] PlayerMovementData playerData;
+    [SerializeField] Transform bodyTransform;
     CharacterController cc;
     Camera cam;
-
     Vector3 inputDirection;
     Vector3 intendedDirection;
     Vector3 targetVelocity;
@@ -25,8 +23,12 @@ public class PlayerMovement : MonoBehaviour
         PollInputs();
         GetIntendedDirection();
         CalculateVelocity();
-    }
 
+        //--------------
+
+        BodyRotationPass();
+    }
+    #region Locomotion
     void PollInputs()
     {
         inputDirection.x = Input.GetAxisRaw("Horizontal");
@@ -56,11 +58,20 @@ public class PlayerMovement : MonoBehaviour
 
         lastVelocity = currentVelocity;
     }
+    #endregion
+
+    #region BodyRotation
+    void BodyRotationPass()
+    { 
+        Vector3 forwardDirection = cam.transform.forward;
+        forwardDirection = Vector3.ProjectOnPlane(forwardDirection, Vector3.up);
+        bodyTransform.localRotation = Quaternion.LookRotation(forwardDirection);
+    }
+    #endregion
 
     void LateUpdate()
     {
         cc.Move(currentVelocity * Time.deltaTime);  
-        
     }
 
 
