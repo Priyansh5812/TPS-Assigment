@@ -23,7 +23,6 @@ public class FollowState : IEnemyState
     public void OnUpdate()
     {
         agent.SetDestination(playerTransform.position);
-        Debug.Log(agent.pathStatus);
     }
 
     public void OnExit(Action onCompleted = null)
@@ -34,5 +33,12 @@ public class FollowState : IEnemyState
 
     public void OnCheckTransition()
     {
+        if (agent.pathPending)
+            return;
+
+        if (agent.remainingDistance <= agent.stoppingDistance)
+        {
+            enemyStateDriver.InitiateStateChange(typeof(AttackState));
+        }
     }
 }

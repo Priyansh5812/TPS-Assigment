@@ -22,9 +22,11 @@ public class EnemyController : MonoBehaviour
     NavMeshAgent agent;
     MeshRenderer meshRenderer;
     Transform playerTransform;
+    Animator animator;
     IDamageHandler vitality;
     IDamageHandler playerVitality;
-
+    LayerMask playerMask;
+    RaycastHit[] hitInfos = new RaycastHit[1];
     void OnEnable()
     {   
         InitializeComponents();
@@ -38,6 +40,9 @@ public class EnemyController : MonoBehaviour
         if(agent == null)
             agent = GetComponent<NavMeshAgent>();
 
+        if (animator == null)
+            animator = GetComponent<Animator>();
+
         if(meshRenderer == null)
             meshRenderer = GetComponentInChildren<MeshRenderer>();
 
@@ -49,6 +54,8 @@ public class EnemyController : MonoBehaviour
 
         if (vitality == null)
             vitality = GetComponent<EnemyVitalityModule>();
+
+        playerMask = 1 << LayerMask.NameToLayer("Player");
     }
 
     void ApplyEnemyData()
@@ -67,7 +74,7 @@ public class EnemyController : MonoBehaviour
 
         // Register each available state here so it can be looked up by type.
         stateReg[typeof(FollowState)] = new FollowState(this , agent, playerTransform);
-        stateReg[typeof(AttackState)] = new AttackState(this);
+        stateReg[typeof(AttackState)] = new AttackState(this, playerTransform, agent, animator, enemyData.animationDuration);
     }
 
     void Update()
@@ -92,16 +99,26 @@ public class EnemyController : MonoBehaviour
         }
 
         isChangingState = true;
-        Debug.LogWarning("Changing State");
         currentEnemyState = stateReg[type];
 
         // Enter the new state and clear the transition lock once it finishes.
         currentEnemyState.OnEnter(OnNewStateEnterCompletion);
         void OnNewStateEnterCompletion()
         {
-            Debug.LogWarning("State Changed");
+
             isChangingState = false;
             OnNewStateEnter?.Invoke();
+        }
+    }
+
+    public void CheckToDamagePlayer()
+    {
+        Debug.Log("Fired");
+        Ray ray = new Ray(this.transform.position , this.transform.forward);
+        if (Physics.RaycastNonAlloc(ray, hitInfos, enemyData.attackRange, playerMask) > 0)
+        {
+            Debug.Log("Damage inflicted to Player");
+            vitality.InflictDamage(playerVitality);
         }
     }
 
@@ -118,5 +135,10 @@ public class EnemyController : MonoBehaviour
     void OnDisable()
     {
         DeInitReferences();
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawRay(transform.position, transform.forward * 2f);
     }
 }

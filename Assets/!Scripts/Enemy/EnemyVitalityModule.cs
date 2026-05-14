@@ -1,7 +1,12 @@
+using System;
 using UnityEngine;
 
 public class EnemyVitalityModule : VitalityModule
 {
+    int index;
+
+    public void InitEnemyIndex(int indx) => index = indx;
+
     public override void InitializeDamageData(ScriptableObject obj)
     {
         var enemyData = obj as EnemyData;
@@ -11,6 +16,6 @@ public class EnemyVitalityModule : VitalityModule
 
     public override void OnEntityKilled()
     {
-
+        EventManager.OnEnemyKilled.Invoke(index);
     }
 }

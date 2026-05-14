@@ -3,6 +3,16 @@ using UnityEngine;
 
 public static class EventManager
 {
+    public static ActionEvent<int> OnEnemyKilled
+    {
+        get; private set;
+    } = new();
+
+    public static ActionEvent OnGameOver
+    {
+        get; private set;
+    } = new();
+
     public static FuncEvent<Transform> GetPlayerTransform
     {
         get; private set;
@@ -12,9 +22,6 @@ public static class EventManager
     {
         get; private set;
     } = new();
-
-    
-
 }
 
 public class ActionEvent

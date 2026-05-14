@@ -17,3 +17,5 @@ MonoBehaviour:
   accelaration: 45
   health: 100
   damageInflict: 25
+  attackRange: 3
+  animationDuration: 1.5
