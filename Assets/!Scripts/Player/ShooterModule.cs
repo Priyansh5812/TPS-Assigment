@@ -7,13 +7,14 @@ public class ShooterModule : MonoBehaviour
     Camera cam;
     Vector3 lookAtPoint;
     Vector2 screenMid;
-    RaycastHit[] hitInfo = new RaycastHit[1];
+    RaycastHit[] hitInfos = new RaycastHit[5];
     const float maxRaycastDistance = 5000f;
     private void Awake()
     {
         animator = GetComponent<Animator>();
         cam = Camera.main;
         screenMid = new Vector2(Screen.width / 2, Screen.height / 2);
+        
     }
 
     void Update()
@@ -26,15 +27,26 @@ public class ShooterModule : MonoBehaviour
     {
         Ray ray = cam.ScreenPointToRay(screenMid);
 
-        if (Physics.RaycastNonAlloc(ray, hitInfo, maxRaycastDistance) > 0)
+        float minDistance = maxRaycastDistance;
+        int c = Physics.RaycastNonAlloc(ray, hitInfos, maxRaycastDistance);
+        if (c > 0)
         {
-            lookAtPoint = hitInfo[0].point;
+            for(int i = 0; i < c; i++)
+            {
+                if (minDistance > hitInfos[i].distance)
+                { 
+                    lookAtPoint = hitInfos[i].point;
+                    minDistance = hitInfos[i].distance;
+                }
+            }
         }
         else 
         {
             lookAtPoint = ray.GetPoint(maxRaycastDistance);
         }
     }
+
+    
 
     void PerformLookAt()
     {
