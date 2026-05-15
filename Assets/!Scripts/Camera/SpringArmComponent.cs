@@ -25,11 +25,9 @@ public class SpringArmComponent : MonoBehaviour
     Vector3 finalPosition;
     Quaternion finalRotation;
     RaycastHit[] hitsInfo = new RaycastHit[1];
-
-    bool isActive = true;
+    
     private void OnEnable()
     {
-        SetGameStartState();
         Application.targetFrameRate = -1;
     }
 
@@ -48,6 +46,9 @@ public class SpringArmComponent : MonoBehaviour
 
     private void Update()
     {
+        if (EventManager.IsGameOver.Invoke())
+            return;
+
         AddInput();
         ComputeRayParams();
         ComputeRotation();
@@ -57,9 +58,9 @@ public class SpringArmComponent : MonoBehaviour
     }
 
     void AddInput()
-    {
-        xInput = isActive ? Input.GetAxis("Mouse X") : 0;
-        yInput = isActive ? Input.GetAxis("Mouse Y") : 0;
+    {   
+        xInput = Input.GetAxis("Mouse X");
+        yInput = Input.GetAxis("Mouse Y");
         Vector3 rotation = this.transform.localRotation.eulerAngles;
         currentX += -yInput * XSens * globalSensMultiplier;
         currentY += xInput * YSens * globalSensMultiplier;
@@ -105,16 +106,7 @@ public class SpringArmComponent : MonoBehaviour
     }
 
 
-    void SetGameStartState()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        isActive = true;
-    }
-    void SetGameEndState()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        isActive = false;
-    }
+
 
 
 

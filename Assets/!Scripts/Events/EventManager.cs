@@ -7,8 +7,12 @@ public static class EventManager
     {
         get; private set;
     } = new();
+    public static ActionEvent OnPlayerKilled
+    {
+        get; private set;
+    } = new();
 
-    public static ActionEvent OnGameOver
+    public static ActionEvent<GameOverType , int> OnGameOver
     {
         get; private set;
     } = new();
@@ -19,6 +23,20 @@ public static class EventManager
     } = new();
 
     public static FuncEvent<IDamageHandler> GetPlayerVitality
+    {
+        get; private set;
+    } = new();
+
+    public static ActionEvent OnGameStarted
+    {
+        get; private set;
+    } = new();
+    public static ActionEvent OnGameRestarted
+    {
+        get; private set;
+    } = new();
+
+    public static FuncEvent<bool> IsGameOver
     {
         get; private set;
     } = new();

@@ -23,9 +23,7 @@ public abstract class VitalityModule : MonoBehaviour, IDamageHandler
 
     public virtual void ReceiveDamage(float inflictAmt)
     {
-        Debug.Log("Damage Received : " + inflictAmt);
         Health -= inflictAmt;
-        Debug.Log("Remaining Health : " + Health);
         if (Health <= 0)
         {
             OnEntityKilled();

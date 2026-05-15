@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour
     Vector3 targetVelocity;
     Vector3 currentVelocity;
     Vector3 lastVelocity;
-
     private void Awake()
     {
         cc = GetComponent<CharacterController>();
@@ -25,14 +24,14 @@ public class PlayerController : MonoBehaviour
     {
         EventManager.GetPlayerTransform.AddListener(GetPlayerTransform);
         EventManager.GetPlayerVitality.AddListener(GetPlayerVitality);
-    }
-    void Start()
-    {
         vitality.InitializeDamageData(playerData);
     }
 
     void Update()
     {
+        if (EventManager.IsGameOver.Invoke())
+            return;
+
         PollInputs();
         GetIntendedDirection();
         CalculateVelocity();
@@ -43,7 +42,7 @@ public class PlayerController : MonoBehaviour
     }
     #region Locomotion
     void PollInputs()
-    {
+    {  
         inputDirection.x = Input.GetAxisRaw("Horizontal");
         inputDirection.z = Input.GetAxisRaw("Vertical");
     }
@@ -82,9 +81,11 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
+
+
     void LateUpdate()
     {
-        cc.Move(currentVelocity * Time.deltaTime);  
+        cc.Move(currentVelocity * Time.deltaTime);
     }
 
     void OnDisable()

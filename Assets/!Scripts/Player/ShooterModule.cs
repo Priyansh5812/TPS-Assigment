@@ -19,13 +19,13 @@ public class ShooterModule : MonoBehaviour
     //-------
 
     ShooterModuleView view;
-
     void Awake()
     {
         animator = GetComponent<Animator>();
         cam = Camera.main;
         screenMid = new Vector2(Screen.width / 2, Screen.height / 2);
         enemyLayer = LayerMask.NameToLayer("Enemy");
+
     }
 
     void Start()
@@ -85,6 +85,7 @@ public class ShooterModule : MonoBehaviour
     void PerformShootAction()
     {
         view.PlayShootAnimation();
+        view.PlayParticleAt(closestHit.point, closestHit.normal);
         Collider collider = closestHit.collider;
         Debug.Log(collider == null ? "None" : collider.gameObject.name);
         if (IsEnemyInLineOfAim(collider))
