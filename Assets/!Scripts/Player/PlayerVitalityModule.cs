@@ -35,6 +35,7 @@ public class PlayerVitalityModule : VitalityModule
     public override void ReceiveDamage(float inflictAmt)
     {
         // Applies damage first and then refreshes the health display
+        Debug.Log(inflictAmt);
         base.ReceiveDamage(inflictAmt);
         UpdateHealthView();
     }

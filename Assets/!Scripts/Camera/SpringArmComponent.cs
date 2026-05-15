@@ -38,8 +38,7 @@ public class SpringArmComponent : MonoBehaviour
 
     private void Start()
     {
-        Initialize();
-        
+        Initialize();    
     }
 
    
@@ -51,9 +50,6 @@ public class SpringArmComponent : MonoBehaviour
 
     private void Update()
     {
-        if (EventManager.IsGameOver.Invoke())
-            return;
-
         AddInput();
         ComputeRayParams();
         ComputeRotation();

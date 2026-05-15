@@ -25,13 +25,11 @@ public class PlayerController : MonoBehaviour
         EventManager.GetPlayerTransform.AddListener(GetPlayerTransform);
         EventManager.GetPlayerVitality.AddListener(GetPlayerVitality);
         vitality.InitializeDamageData(playerData);
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        if (EventManager.IsGameOver.Invoke())
-            return;
-
         PollInputs();
         GetIntendedDirection();
         CalculateVelocity();
