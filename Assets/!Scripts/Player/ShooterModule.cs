@@ -2,6 +2,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(Animator))]
+// Handles aiming shooting timing and hit detection for the player weapon
 public class ShooterModule : MonoBehaviour
 {
     [SerializeField] PlayerStatData data;
@@ -11,13 +12,14 @@ public class ShooterModule : MonoBehaviour
     Camera cam;
     Vector3 lookAtPoint;
     Vector2 screenMid;
+    // Reusable hit buffer for aim checks
     RaycastHit[] hitInfos = new RaycastHit[5];
     RaycastHit closestHit;
     const float maxRaycastDistance = 5000f;
     float lastFiringTime;
     LayerMask enemyLayer;
-    //-------
 
+    // View helper that handles firing animation and impact particles
     ShooterModuleView view;
     void Awake()
     {
@@ -43,6 +45,7 @@ public class ShooterModule : MonoBehaviour
     #region Aim
     void CalculateLookAtPoint()
     {
+        // Finds the closest point under the screen center so the weapon can aim correctly
         Ray ray = cam.ScreenPointToRay(screenMid);
 
         float minDistance = maxRaycastDistance;
@@ -68,6 +71,7 @@ public class ShooterModule : MonoBehaviour
 
     void PerformLookAt()
     {
+        // Rotates the shooter toward the current aim point
         this.transform.LookAt(lookAtPoint);
     }
     #endregion
@@ -75,6 +79,7 @@ public class ShooterModule : MonoBehaviour
     #region ShootLogic
     void CheckForShoot()
     {   
+        // Fires only when the mouse is pressed and the fire rate delay has passed
         if (Input.GetMouseButtonDown(0) && HasExceededShootTimeout())
         {
             lastFiringTime = Time.unscaledTime;
@@ -84,6 +89,7 @@ public class ShooterModule : MonoBehaviour
 
     void PerformShootAction()
     {
+        // Plays the visual shot feedback and applies damage if the aim lands on an enemy
         view.PlayShootAnimation();
         view.PlayParticleAt(closestHit.point, closestHit.normal);
         Collider collider = closestHit.collider;
@@ -98,24 +104,17 @@ public class ShooterModule : MonoBehaviour
 
     bool IsEnemyInLineOfAim(Collider collider)
     {
+        // Checks whether the current hit collider belongs to the enemy layer
         return collider != null ? collider.gameObject.layer == enemyLayer: false;
     }
 
     bool HasExceededShootTimeout()
     {
+        // Compares the fire rate delay against the time since the last shot
         float reqDelay = 1 / data.fireRate;
         return reqDelay <= Time.unscaledTime - lastFiringTime;
     }
 
     #endregion
-
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(lookAtPoint, 0.5f);
-    }
-
-
 }
 
