@@ -20,7 +20,6 @@ public class LevelManager : MonoBehaviour
         EventManager.OnPlayerKilled.AddListener(HandlePlayerDeath);
         EventManager.OnEnemyKilled.AddListener(HandleEnemyKilled);
         EventManager.OnGameRestarted.AddListener(HandleGameRestart);
-        EventManager.IsGameOver.AddListener(IsGameOver);
     }
 
     void Start()
@@ -64,8 +63,6 @@ public class LevelManager : MonoBehaviour
         }
         totalEnemies = modules.Length;
     }
-
-    bool IsGameOver() => isGameOver;
 
 
     void HandleEnemyKilled(int index)
@@ -130,6 +127,5 @@ public class LevelManager : MonoBehaviour
         EventManager.OnEnemyKilled.RemoveListener(HandleEnemyKilled);
         EventManager.OnGameRestarted.RemoveListener(HandleGameRestart);
         EventManager.OnPlayerKilled.RemoveListener(HandlePlayerDeath);
-        EventManager.IsGameOver.RemoveListener(IsGameOver);
     }
 }

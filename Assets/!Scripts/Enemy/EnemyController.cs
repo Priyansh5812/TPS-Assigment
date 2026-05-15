@@ -80,8 +80,6 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
-        if (EventManager.IsGameOver.Invoke())
-            return;
 
         if (isChangingState)
             return;
@@ -117,9 +115,6 @@ public class EnemyController : MonoBehaviour
 
     public void CheckToDamagePlayer()
     {
-        if (EventManager.IsGameOver.Invoke())
-            return;
-
         Ray ray = new Ray(this.transform.position , this.transform.forward);
         if (Physics.RaycastNonAlloc(ray, hitInfos, enemyData.attackRange, playerMask) > 0)
         {
@@ -145,8 +140,10 @@ public class EnemyController : MonoBehaviour
         DeInitReferences();
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         Gizmos.DrawRay(transform.position, transform.forward * 2f);
     }
+#endif
 }

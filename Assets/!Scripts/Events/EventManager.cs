@@ -36,10 +36,6 @@ public static class EventManager
         get; private set;
     } = new();
 
-    public static FuncEvent<bool> IsGameOver
-    {
-        get; private set;
-    } = new();
 }
 
 public class ActionEvent
