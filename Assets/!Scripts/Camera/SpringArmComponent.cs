@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 // Camera Handling includes boom logic that follows the player and avoids clipping
@@ -30,11 +31,16 @@ public class SpringArmComponent : MonoBehaviour
     Vector3 finalPosition;
     Quaternion finalRotation;
     RaycastHit[] hitsInfo = new RaycastHit[1];
+    bool isActive;
+    
+    
     
     private void OnEnable()
     {
         Application.targetFrameRate = -1;
+        EventManager.OnPrepareGame.AddListener(EnableController);
     }
+
 
     private void Start()
     {
@@ -49,7 +55,7 @@ public class SpringArmComponent : MonoBehaviour
     }
 
     private void Update()
-    {
+    {   
         AddInput();
         ComputeRayParams();
         ComputeRotation();
@@ -103,7 +109,10 @@ public class SpringArmComponent : MonoBehaviour
 
     // Pose Updation based on the type of updation has been set in editor
     void ApplyPose()
-    {   
+    {
+        if (!isActive)
+            return;
+
         float rt = 1f - Mathf.Exp(-lazyRotationUpdationSpeed * Time.deltaTime);
         float pt = 1f - Mathf.Exp(-lazyPositionUpdationSpeed * Time.deltaTime);
         mainCamera.transform.rotation = lazyUpdateRotation ? Quaternion.Slerp(mainCamera.transform.rotation, finalRotation, rt) : finalRotation;
@@ -111,9 +120,15 @@ public class SpringArmComponent : MonoBehaviour
     }
 
 
+    void EnableController()
+    {
+        isActive = true;
+    }
 
-
-
+    private void OnDisable()
+    {
+        EventManager.OnPrepareGame.RemoveListener(EnableController);
+    }
 
 
 }

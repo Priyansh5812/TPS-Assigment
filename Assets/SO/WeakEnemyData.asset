@@ -19,3 +19,4 @@ MonoBehaviour:
   damageInflict: 25
   attackRange: 3
   animationDuration: 1.5
+  scoreOnDeath: 10

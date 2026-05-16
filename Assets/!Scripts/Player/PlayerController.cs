@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     Vector3 targetVelocity;
     Vector3 currentVelocity;
     Vector3 lastVelocity;
+    bool isActive;
     private void Awake()
     {
         cc = GetComponent<CharacterController>();
@@ -24,12 +25,13 @@ public class PlayerController : MonoBehaviour
     {
         EventManager.GetPlayerTransform.AddListener(GetPlayerTransform);
         EventManager.GetPlayerVitality.AddListener(GetPlayerVitality);
+        EventManager.OnPrepareGame.AddListener(EnableController);
         vitality.InitializeDamageData(playerData);
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
-    {
+    {   
         PollInputs();
         GetIntendedDirection();
         CalculateVelocity();
@@ -41,8 +43,8 @@ public class PlayerController : MonoBehaviour
     #region Locomotion
     void PollInputs()
     {  
-        inputDirection.x = Input.GetAxisRaw("Horizontal");
-        inputDirection.z = Input.GetAxisRaw("Vertical");
+        inputDirection.x = isActive ? Input.GetAxisRaw("Horizontal"): 0;
+        inputDirection.z = isActive ? Input.GetAxisRaw("Vertical"): 0;
     }
 
     void GetIntendedDirection()
@@ -80,6 +82,10 @@ public class PlayerController : MonoBehaviour
     #endregion
 
 
+    void EnableController()
+    {
+        isActive = true;
+    }
 
     void LateUpdate()
     {
@@ -90,6 +96,7 @@ public class PlayerController : MonoBehaviour
     {
         EventManager.GetPlayerTransform.RemoveListener(GetPlayerTransform);
         EventManager.GetPlayerVitality.RemoveListener(GetPlayerVitality);
+        EventManager.OnPrepareGame.RemoveListener(EnableController);
     }
 
 

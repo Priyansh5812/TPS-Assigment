@@ -18,6 +18,7 @@ public class ShooterModule : MonoBehaviour
     const float maxRaycastDistance = 5000f;
     float lastFiringTime;
     LayerMask enemyLayer;
+    bool isActive;
 
     // View helper that handles firing animation and impact particles
     ShooterModuleView view;
@@ -27,7 +28,11 @@ public class ShooterModule : MonoBehaviour
         cam = Camera.main;
         screenMid = new Vector2(Screen.width / 2, Screen.height / 2);
         enemyLayer = LayerMask.NameToLayer("Enemy");
+    }
 
+    private void OnEnable()
+    {
+        EventManager.OnPrepareGame.AddListener(EnableShooter);
     }
 
     void Start()
@@ -80,7 +85,7 @@ public class ShooterModule : MonoBehaviour
     void CheckForShoot()
     {   
         // Fires only when the mouse is pressed and the fire rate delay has passed
-        if (Input.GetMouseButtonDown(0) && HasExceededShootTimeout())
+        if (isActive && Input.GetMouseButtonDown(0) && HasExceededShootTimeout())
         {
             lastFiringTime = Time.unscaledTime;
             PerformShootAction();
@@ -116,5 +121,15 @@ public class ShooterModule : MonoBehaviour
     }
 
     #endregion
+
+    void EnableShooter()
+    {
+        isActive = true;
+    }
+
+    void OnDisable()
+    {
+        EventManager.OnPrepareGame.RemoveListener(EnableShooter);
+    }
 }
 

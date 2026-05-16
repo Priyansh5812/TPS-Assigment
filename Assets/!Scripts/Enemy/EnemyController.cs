@@ -8,7 +8,6 @@ using UnityEngine.AI;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] EnemyData enemyData;
- 
     // Holds one reusable instance per enemy state type.
     Dictionary<System.Type, IEnemyState> stateReg;
 
@@ -27,7 +26,7 @@ public class EnemyController : MonoBehaviour
     IDamageHandler playerVitality;
     LayerMask playerMask;
     RaycastHit[] hitInfos = new RaycastHit[1];
-
+    
     void OnEnable()
     {   
         InitializeComponents();
@@ -66,8 +65,9 @@ public class EnemyController : MonoBehaviour
         meshRenderer.material = enemyData.meshMaterial;
         vitality.InitializeDamageData(enemyData);
     }
-    
 
+
+    public void SetEnemyData(EnemyData e) => enemyData = e;
 
     void InitializeStateReg()
     {
@@ -80,7 +80,6 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
-
         if (isChangingState)
             return;
 
@@ -91,6 +90,9 @@ public class EnemyController : MonoBehaviour
 
     public void InitiateStateChange(Type type, Action OnExit = null, Action OnNewStateEnter = null)
     {
+        if (stateReg == null)
+            return;
+
         // Let the current state clean itself up before swapping references.
         currentEnemyState?.OnExit(OnExit);
 
@@ -123,6 +125,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+
     void DeInitReferences()
     {
         if (stateReg == null)
@@ -132,8 +135,6 @@ public class EnemyController : MonoBehaviour
         stateReg = null;
         currentEnemyState = null;
     }
-
-
 
     void OnDisable()
     {

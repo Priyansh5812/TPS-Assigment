@@ -3,10 +3,21 @@ using UnityEngine;
 
 public static class EventManager
 {
-    public static ActionEvent<int> OnEnemyKilled
+    public static ActionEvent<EnemyController , int> OnEnemyKilled
     {
         get; private set;
     } = new();
+
+    public static ActionEvent<int> OnUpdateEnemyCount
+    {
+        get; private set;
+    } = new();
+
+    public static ActionEvent<float> OnPlayerDamaged
+    {
+        get; private set;
+    } = new();
+
     public static ActionEvent OnPlayerKilled
     {
         get; private set;
@@ -27,10 +38,23 @@ public static class EventManager
         get; private set;
     } = new();
 
-    public static ActionEvent OnGameStarted
+    public static ActionEvent OnPrepareGame
     {
         get; private set;
     } = new();
+
+    public static ActionEvent<int> OnPreWaveStarted
+    {
+        get; private set;
+    } = new();
+
+    public static ActionEvent OnWaveStarted
+    {
+        get; private set;
+    } = new();
+
+  
+
     public static ActionEvent OnGameRestarted
     {
         get; private set;

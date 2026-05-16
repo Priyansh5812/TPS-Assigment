@@ -10,4 +10,12 @@ public class EnemyData : ScriptableObject
     public float damageInflict;
     public float attackRange = 2.0f;
     public float animationDuration;
+    public int scoreOnDeath;
+}
+
+
+public enum EnemyType
+{
+    Weak,
+    Tank
 }
