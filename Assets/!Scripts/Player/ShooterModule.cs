@@ -11,7 +11,10 @@ public class ShooterModule : MonoBehaviour
     Animator animator;
     Camera cam;
     Vector3 lookAtPoint;
-    Vector2 screenMid;
+    Vector2 screenMid
+    { 
+        get => new Vector2(Screen.width / 2, Screen.height / 2);
+    }
     // Reusable hit buffer for aim checks
     RaycastHit[] hitInfos = new RaycastHit[5];
     RaycastHit closestHit;
@@ -26,7 +29,6 @@ public class ShooterModule : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         cam = Camera.main;
-        screenMid = new Vector2(Screen.width / 2, Screen.height / 2);
         enemyLayer = LayerMask.NameToLayer("Enemy");
     }
 

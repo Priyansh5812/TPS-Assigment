@@ -51,7 +51,6 @@ public class LevelEndState : IMonoState
     void OnGameRestart()
     {
         controller.InitiateStateChange(typeof(GameplayState));
-        EventManager.OnGameRestarted.Invoke();
     }
 
     void OnExit()

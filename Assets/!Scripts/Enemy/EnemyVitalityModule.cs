@@ -5,8 +5,6 @@ public class EnemyVitalityModule : VitalityModule
 {   
     EnemyController controller;
     EnemyData enemyData;
-    // Stores the registry index for this enemy
-    int index;
 
     private void OnEnable()
     {

@@ -27,7 +27,6 @@ public class LevelManager : MonoBehaviour
     private void OnEnable()
     {
         EventManager.OnPrepareGame.AddListener(PrepareGame);
-        EventManager.OnGameRestarted.AddListener(PrepareGame);
         EventManager.OnWaveStarted.AddListener(StartCurrentWave);
         EventManager.OnEnemyKilled.AddListener(HandleEnemyKilled);
         EventManager.OnPlayerKilled.AddListener(HandlePlayerKilled);
@@ -76,6 +75,8 @@ public class LevelManager : MonoBehaviour
 
     void StartCurrentWave()
     {
+        Debug.Log(currWaveIndex);
+
         remainingEnemies = waves[currWaveIndex].weakEnemyCount + waves[currWaveIndex].tankEnemyCount;
         maxActiveEnemies = waves[currWaveIndex].maxActiveEnemies;
 
@@ -107,10 +108,11 @@ public class LevelManager : MonoBehaviour
         }
         else 
         {
+            ResetPlayer(false);
             EventManager.OnGameOver.Invoke(GameOverType.WIN , score);
             ResetStats();
-            ResetPlayer(false);
         }
+        Debug.Log("Routine Ended");
         waveRoutine = null;
     }
 
@@ -168,7 +170,6 @@ public class LevelManager : MonoBehaviour
     {
         var e = inactiveEnemyControllers.Dequeue();
         var sp = GetRandomSpawnPoint();
-        Debug.Log(enemyListIndex);
         e.SetEnemyData(enemyList[enemyListIndex++] == EnemyType.Weak ? weakEnemyData : tankEnemyData);
         sp.SetTransform(e.transform);
         e.gameObject.SetActive(true);
@@ -213,7 +214,6 @@ public class LevelManager : MonoBehaviour
     private void OnDisable()
     {
         EventManager.OnPrepareGame.RemoveListener(PrepareGame);
-        EventManager.OnGameRestarted.RemoveListener(PrepareGame);
         EventManager.OnWaveStarted.RemoveListener(StartCurrentWave);
         EventManager.OnEnemyKilled.RemoveListener(HandleEnemyKilled);
         EventManager.OnPlayerKilled.RemoveListener(HandlePlayerKilled);

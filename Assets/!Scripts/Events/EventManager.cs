@@ -52,14 +52,6 @@ public static class EventManager
     {
         get; private set;
     } = new();
-
-  
-
-    public static ActionEvent OnGameRestarted
-    {
-        get; private set;
-    } = new();
-
 }
 
 public class ActionEvent
