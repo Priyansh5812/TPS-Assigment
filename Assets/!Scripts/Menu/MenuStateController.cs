@@ -3,6 +3,7 @@ using UnityEngine;
 using System;
 public class MenuStateController : MonoBehaviour
 {   
+    // menu controller that switches between menu states and orchestrates ui flow
     [SerializeField] MainMenuStateData mainMenuStateData;
     [SerializeField] GameplayStateData gameplayStateData;
     [SerializeField] LevelEndStateData levelEndStateData;
@@ -11,6 +12,9 @@ public class MenuStateController : MonoBehaviour
     readonly Dictionary<Type, IMonoState> stateReg = new();
     IMonoState currentState;
     bool isChangingState;
+    // registry of state instances used by the menu controller
+    // current active state instance
+    // flag used to prevent overlapping state transitions
 
    
     private void OnEnable()

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameplayState : IMonoState
 {
+    // state that displays gameplay ui and updates hud elements
     MenuStateController controller;
     GameplayStateData data;
     WaitForSeconds delay;

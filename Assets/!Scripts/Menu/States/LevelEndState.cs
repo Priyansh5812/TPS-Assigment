@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class LevelEndState : IMonoState
 {
+    // state that shows game over or win screen and allows restart
     MenuStateController controller;
     LevelEndStateData data;
 

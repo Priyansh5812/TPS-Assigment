@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class MainMenuState : IMonoState
 {
+    // state that shows the main menu ui and handles start button
     MenuStateController controller;
     MainMenuStateData data;
     public MainMenuState(MenuStateController controller, MainMenuStateData data)

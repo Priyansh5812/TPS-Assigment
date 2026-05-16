@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-// Handles the overall round flow for starting resetting and ending the level
 public class LevelManager : MonoBehaviour
 {
+    // manages enemy waves player spawn and overall level progression
     [SerializeField] EnemyController enemyPrefab;
     [SerializeField] EnemyData weakEnemyData;
     [SerializeField] EnemyData tankEnemyData;
@@ -41,6 +41,7 @@ public class LevelManager : MonoBehaviour
 
     void StockPlayer()
     {   
+        // find the player instance and cache its start pose
         playerData.Item1 = FindAnyObjectByType<PlayerController>(FindObjectsInactive.Include);
         playerData.Item2 = new Pose(playerData.Item1.transform.position, playerData.Item1.transform.rotation);
     }
@@ -65,6 +66,7 @@ public class LevelManager : MonoBehaviour
 
     public void PrepareGame()
     {
+        // reset player and clear enemies then notify ui to prepare next wave
         ResetPlayer(true);
         ClearEnemyControllers();
         PrepareEnemyList();
@@ -75,8 +77,7 @@ public class LevelManager : MonoBehaviour
 
     void StartCurrentWave()
     {
-        Debug.Log(currWaveIndex);
-
+        // set up counts and start spawning routine for current wave
         remainingEnemies = waves[currWaveIndex].weakEnemyCount + waves[currWaveIndex].tankEnemyCount;
         maxActiveEnemies = waves[currWaveIndex].maxActiveEnemies;
 
@@ -87,7 +88,7 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator WaveRoutine()
     {
-        while (!isStocked) // Wait if enemies are not stocked yet
+        while (!isStocked) // wait until enemy pool is ready
         {
             yield return null;
         }
@@ -119,6 +120,9 @@ public class LevelManager : MonoBehaviour
     void HandleEnemyKilled(EnemyController e , int scoreInr)
     {
         remainingEnemies--;
+
+        Debug.Log(scoreInr);
+
         score += scoreInr;
         EventManager.OnUpdateEnemyCount.Invoke(remainingEnemies);
 
@@ -135,9 +139,9 @@ public class LevelManager : MonoBehaviour
         if (waveRoutine != null)
             StopCoroutine(waveRoutine);
         isPlayerDead = true;
-        ResetStats();
         ResetPlayer(false);
         EventManager.OnGameOver.Invoke(GameOverType.LOST , score);
+        ResetStats();
     }
 
     void ResetStats()
